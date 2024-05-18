@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  type          String
+  debit         Float    @default(0.0)
+  credit        Float    @default(0.0)
+  debitEntries  Entry[]  @relation("DebitAccount")
+  creditEntries Entry[]  @relation("CreditAccount")
+}
+
+model Entry {
+  id             Int      @id @default(autoincrement())
+  debitAccount   Account  @relation("DebitAccount", fields: [debitAccountId], references: [id])
+  debitAccountId Int
+  creditAccount  Account  @relation("CreditAccount", fields: [creditAccountId], references: [id])
+  creditAccountId Int
+  amount         Float
+  date           DateTime
+  documentNumber String
+  description    String
+  remark         String
+  status         String   @default("open") // "open" or "posted"
+}
+
+
