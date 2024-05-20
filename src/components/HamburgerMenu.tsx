@@ -38,17 +38,41 @@ export default function HamburgerMenu() {
       {isOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-40">
           <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50">
-            <nav className="p-6 mt-10"> {/* Added margin-top here */}
+            <nav className="p-6 mt-10">
               <ul>
-                <li className="mb-4">
-                  <Link href="/accounts" legacyBehavior>
-                    <a onClick={closeMenu} className="text-gray-800 text-lg">Konten</a>
-                  </Link>
+                <li className="mb-4 group">
+                  <span className="text-gray-800 text-lg font-bold cursor-pointer">
+                    Konten
+                  </span>
+                  <ul className="pl-6 mt-2 hidden group-hover:block">
+                    <li className="mb-4">
+                      <Link href="/accounts" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Konten Übersicht</a>
+                      </Link>
+                    </li>
+                    <li className="mb-4">
+                      <Link href="/accounts/create" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Konto erstellen</a>
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
-                <li className="mb-4">
-                  <Link href="/" legacyBehavior>
-                    <a onClick={closeMenu} className="text-gray-800 text-lg">Buchungssätze</a>
-                  </Link>
+                <li className="mb-4 group">
+                  <span className="text-gray-800 text-lg font-bold cursor-pointer">
+                    Buchungssätze
+                  </span>
+                  <ul className="pl-6 mt-2 hidden group-hover:block">
+                    <li className="mb-4">
+                      <Link href="/entries/list" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Buchungssätze Übersicht</a>
+                      </Link>
+                    </li>
+                    <li className="mb-4">
+                      <Link href="/entries/create" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Buchungssatz erstellen</a>
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </nav>
