@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
-import CreateAccountForm from '@/components/CreateAccountForm';
-import AccountList from '@/components/AccountList';
+import Button from '@/components/Button';
 import { Account } from '@/core/types/Account';
 
-export default function Accounts() {
+export default function AccountsList() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -18,21 +17,6 @@ export default function Accounts() {
     const response = await fetch('/api/accounts');
     const data = await response.json();
     setAccounts(data);
-  };
-
-  const createAccount = async (name: string, type: string) => {
-    setError('');
-
-    const res = await fetch('/api/accounts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, type }),
-    });
-    const newAccount = await res.json();
-    setAccounts([...accounts, newAccount]);
-    setMessage('Konto erfolgreich erstellt.');
   };
 
   const deleteAccount = async (id: number) => {
@@ -58,13 +42,31 @@ export default function Accounts() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Kontoverwaltung</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Konten Übersicht</h1>
       {error && <p className="text-red-500">{error}</p>}
       {message && <p className="text-green-500">{message}</p>}
-      <CreateAccountForm accounts={accounts} onCreate={createAccount} error={error} setError={setError} />
-      <h2 className="text-xl font-semibold mb-2">Kontoliste</h2>
-      <AccountList accounts={accounts} onDelete={deleteAccount} />
+      <div className="bg-white p-4 rounded shadow">
+        {accounts.length === 0 ? (
+          <p className="text-gray-700">Keine Konten vorhanden. Bitte erstellen Sie ein Konto.</p>
+        ) : (
+          <ul className="space-y-2">
+            {accounts.map(account => (
+              <li key={account.id} className="p-4 border rounded flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-medium">{account.name}</h3>
+                  <p>Typ: {account.type}</p>
+                  <p>Soll: {account.debit}</p>
+                  <p>Haben: {account.credit}</p>
+                </div>
+                <Button onClick={() => deleteAccount(account.id)} className="bg-red-600 hover:bg-red-700">
+                  Löschen
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

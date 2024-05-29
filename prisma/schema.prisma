@@ -31,4 +31,19 @@ model Entry {
   status         String   @default("open") // "open" or "posted"
 }
 
+model Member {
+  id                  Int      @id @default(autoincrement())
+  name                String
+  firstName           String
+  birthdate           DateTime
+  membershipStartDate DateTime
+  membershipEndDate   DateTime?
+  phoneNumber         String?
+  mobileNumber        String?
+  email               String
+  postalCode          String
+  city                String
+  street              String
+  addressAddition     String?
+}
 

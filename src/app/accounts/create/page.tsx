@@ -40,6 +40,7 @@ export default function CreateAccountPage() {
       {error && <p className="text-red-500">{error}</p>}
       <InputField
         label="Name"
+        name="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />

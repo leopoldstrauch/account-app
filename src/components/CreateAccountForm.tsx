@@ -39,6 +39,7 @@ export default function CreateAccountForm({ accounts, onCreate, error, setError 
       {error && <p className="text-red-500">{error}</p>}
       <InputField
         label="Name"
+        name="accountName" // Hinzugefügt: name-Eigenschaft
         value={name}
         onChange={(e) => setName(e.target.value)}
       />

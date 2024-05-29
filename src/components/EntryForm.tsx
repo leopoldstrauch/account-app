@@ -1,132 +1,95 @@
-import { useState, useEffect } from 'react';
+import { Account } from '@/core/types/Account';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import Button from './Button';
-import { Account } from '../core/types/Account';
-import { Entry } from '../core/types/Entry';
+import { useState } from 'react';
+import { EntryInput } from '@/core/types/Entry';
 
-type EntryInput = Omit<Entry, 'id' | 'status'> & { id?: number };
-
-type EntryFormProps = {
+interface EntryFormProps {
   accounts: Account[];
-  editingEntry?: Entry | null;
+  editingEntry: EntryInput | null;
   onSave: (entry: EntryInput) => void;
   error: string;
   setError: (error: string) => void;
-};
+}
 
 export default function EntryForm({ accounts, editingEntry, onSave, error, setError }: EntryFormProps) {
-  const [debitAccountId, setDebitAccountId] = useState<number | null>(null);
-  const [creditAccountId, setCreditAccountId] = useState<number | null>(null);
-  const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState('');
-  const [documentNumber, setDocumentNumber] = useState('');
-  const [description, setDescription] = useState('');
-  const [remark, setRemark] = useState('');
+  const [formData, setFormData] = useState<EntryInput>({
+    id: editingEntry?.id,
+    debitAccountId: editingEntry?.debitAccountId ?? 0,
+    creditAccountId: editingEntry?.creditAccountId ?? 0,
+    amount: editingEntry?.amount ?? 0,
+    date: editingEntry?.date ?? '',
+    documentNumber: editingEntry?.documentNumber ?? '',
+    description: editingEntry?.description ?? '',
+    remark: editingEntry?.remark ?? '',
+  });
 
-  useEffect(() => {
-    if (editingEntry) {
-      setDebitAccountId(editingEntry.debitAccountId);
-      setCreditAccountId(editingEntry.creditAccountId);
-      setAmount(editingEntry.amount);
-      setDate(new Date(editingEntry.date).toISOString().split('T')[0]);
-      setDocumentNumber(editingEntry.documentNumber);
-      setDescription(editingEntry.description);
-      setRemark(editingEntry.remark);
-    } else {
-      resetForm();
-    }
-  }, [editingEntry]);
-
-  const resetForm = () => {
-    setDebitAccountId(null);
-    setCreditAccountId(null);
-    setAmount(0);
-    setDate('');
-    setDocumentNumber('');
-    setDescription('');
-    setRemark('');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === 'debitAccountId' || name === 'creditAccountId' ? Number(value) : value,
+    });
   };
 
-  const handleSubmit = () => {
-    setError('');
-
-    if (debitAccountId === null || creditAccountId === null) {
-      setError('Bitte wählen Sie sowohl Soll- als auch Habenkonten aus.');
-      return;
-    }
-
-    if (debitAccountId === creditAccountId) {
-      setError('Soll- und Habenkonten dürfen nicht identisch sein.');
-      return;
-    }
-
-    if (amount <= 0) {
-      setError('Der Betrag muss größer als null sein.');
-      return;
-    }
-
-    const entry: EntryInput = {
-      debitAccountId,
-      creditAccountId,
-      amount,
-      date: new Date(date),
-      documentNumber,
-      description,
-      remark,
-      id: editingEntry?.id,
-    };
-
-    onSave(entry);
-    resetForm();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-4">
-      <h2 className="text-xl font-semibold mb-2">{editingEntry ? 'Buchungssatz bearbeiten' : 'Buchungssatz erstellen'}</h2>
+    <form onSubmit={handleSubmit}>
       {error && <p className="text-red-500">{error}</p>}
       <SelectField
         label="Sollkonto"
-        value={debitAccountId ?? ''}
-        onChange={(e) => setDebitAccountId(Number(e.target.value))}
-        options={accounts.map((account) => ({ value: account.id, label: account.name }))}
+        name="debitAccountId"
+        value={String(formData.debitAccountId)} // Wert in String umwandeln
+        onChange={handleChange}
+        options={accounts.map(account => ({ value: account.id, label: account.name }))}
       />
       <SelectField
         label="Habenkonto"
-        value={creditAccountId ?? ''}
-        onChange={(e) => setCreditAccountId(Number(e.target.value))}
-        options={accounts.map((account) => ({ value: account.id, label: account.name }))}
+        name="creditAccountId"
+        value={String(formData.creditAccountId)} // Wert in String umwandeln
+        onChange={handleChange}
+        options={accounts.map(account => ({ value: account.id, label: account.name }))}
       />
       <InputField
         label="Betrag"
         type="number"
-        value={amount}
-        onChange={(e) => setAmount(Number(e.target.value))}
+        name="amount"
+        value={String(formData.amount)} // Wert in String umwandeln
+        onChange={handleChange}
       />
       <InputField
         label="Datum"
         type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
+        name="date"
+        value={formData.date.split('T')[0]}
+        onChange={handleChange}
       />
       <InputField
         label="Belegnummer"
-        value={documentNumber}
-        onChange={(e) => setDocumentNumber(e.target.value)}
+        name="documentNumber"
+        value={formData.documentNumber}
+        onChange={handleChange}
       />
       <InputField
         label="Beschreibung"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
       />
       <InputField
         label="Anmerkung"
-        value={remark}
-        onChange={(e) => setRemark(e.target.value)}
+        name="remark"
+        value={formData.remark}
+        onChange={handleChange}
       />
-      <Button onClick={handleSubmit}>
+      <Button type="submit" onClick={() => {}}>
         {editingEntry ? 'Buchungssatz aktualisieren' : 'Buchungssatz erstellen'}
       </Button>
-    </div>
+    </form>
   );
 }

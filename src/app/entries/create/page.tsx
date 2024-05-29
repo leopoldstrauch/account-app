@@ -1,16 +1,14 @@
-// src/app/entries/create/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import EntryForm from '@/components/EntryForm';
 import { Account } from '@/core/types/Account';
-import { Entry } from '@/core/types/Entry';
+import { EntryInput } from '@/core/types/Entry';
 
 export default function CreateEntryPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [error, setError] = useState('');
-  const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
+  const [editingEntry, setEditingEntry] = useState<EntryInput | null>(null);
 
   useEffect(() => {
     fetchAccounts();
@@ -22,7 +20,7 @@ export default function CreateEntryPage() {
     setAccounts(data);
   };
 
-  const handleSaveEntry = async (entry: Omit<Entry, 'status'> & { id?: number }) => {
+  const handleSaveEntry = async (entry: EntryInput) => {
     setError('');
 
     let response;

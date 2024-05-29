@@ -2,30 +2,30 @@ import React from 'react';
 
 interface InputFieldProps {
   label: string;
+  name: string; // Name hinzugefügt
   type?: string;
-  value: string | number;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
+  name, // Name hinzugefügt
   type = 'text',
   value,
   onChange,
-  className = '',
-}) => {
-  return (
-    <div className={`mb-2 ${className}`}>
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-      />
-    </div>
-  );
-};
+}) => (
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={name}>{label}</label>
+    <input
+      id={name}
+      name={name} // Name hinzugefügt
+      type={type}
+      value={value}
+      onChange={onChange}
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+    />
+  </div>
+);
 
 export default InputField;

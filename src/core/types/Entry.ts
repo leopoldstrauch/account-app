@@ -10,13 +10,14 @@ export type Entry = {
     remark: string;
   };
   
-  export type EntryInput = {
+  export interface EntryInput {
+    id?: number;
     debitAccountId: number;
     creditAccountId: number;
     amount: number;
-    date: Date;
+    date: string;
     documentNumber: string;
     description: string;
     remark: string;
-  };
+  }
   

@@ -1,9 +1,10 @@
-import { IEntryRepository } from '../../interfaces/IEntryRepository';
+import { IEntryRepository } from '@/core/interfaces/IEntryRepository';
+import { Entry } from '@/core/types/Entry';
 
 export class ReverseEntry {
-  constructor(private entryRepository: IEntryRepository) {}
+    constructor(private entryRepository: IEntryRepository) { }
 
-  async run(id: number) {
-    return this.entryRepository.reverseEntry(id);
-  }
+    async run(id: number): Promise<Entry> {
+        return this.entryRepository.reverseEntry(id);
+    }
 }

@@ -46,7 +46,7 @@ export default function HamburgerMenu() {
                   </span>
                   <ul className="pl-6 mt-2 hidden group-hover:block">
                     <li className="mb-4">
-                      <Link href="/accounts" legacyBehavior>
+                      <Link href="/accounts/list" legacyBehavior>
                         <a onClick={closeMenu} className="text-gray-800 text-lg">Konten Übersicht</a>
                       </Link>
                     </li>
@@ -70,6 +70,23 @@ export default function HamburgerMenu() {
                     <li className="mb-4">
                       <Link href="/entries/create" legacyBehavior>
                         <a onClick={closeMenu} className="text-gray-800 text-lg">Buchungssatz erstellen</a>
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+                <li className="mb-4 group">
+                  <span className="text-gray-800 text-lg font-bold cursor-pointer">
+                    Mitglieder
+                  </span>
+                  <ul className="pl-6 mt-2 hidden group-hover:block">
+                    <li className="mb-4">
+                      <Link href="/members/list" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Mitglieder Übersicht</a>
+                      </Link>
+                    </li>
+                    <li className="mb-4">
+                      <Link href="/members/create" legacyBehavior>
+                        <a onClick={closeMenu} className="text-gray-800 text-lg">Mitglied erstellen</a>
                       </Link>
                     </li>
                   </ul>

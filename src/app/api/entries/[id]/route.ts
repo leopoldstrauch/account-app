@@ -3,7 +3,7 @@ import { DeleteEntry } from '../../../../core/usecases/entries/DeleteEntry';
 import { ReverseEntry } from '../../../../core/usecases/entries/ReverseEntry';
 import { PrismaEntryRepository } from '@/core/repositories/PrismaEntryRepository';
 
-const entryRepository = new PrismaEntryRepository();
+const entryRepository: PrismaEntryRepository = new PrismaEntryRepository();
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const id = Number(params.id);
