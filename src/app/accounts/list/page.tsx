@@ -1,10 +1,11 @@
+// src/app/accounts/list/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
-import Button from '@/components/Button';
 import { Account } from '@/core/types/Account';
+import Button from '@/components/Button';
 
-export default function AccountsList() {
+export default function AccountListPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -14,27 +15,33 @@ export default function AccountsList() {
   }, []);
 
   const fetchAccounts = async () => {
-    const response = await fetch('/api/accounts');
-    const data = await response.json();
-    setAccounts(data);
+    try {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setAccounts(data);
+    } catch (error) {
+      setError('Fehler beim Laden der Konten');
+      console.error('Failed to fetch accounts:', error);
+    }
   };
 
   const deleteAccount = async (id: number) => {
     if (!confirm('Sind Sie sicher, dass Sie dieses Konto und alle damit verbundenen Buchungen löschen möchten?')) {
       return;
     }
-
-    const res = await fetch('/api/accounts', {
+  
+    const res = await fetch(`/api/accounts/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
     });
-
-    const result = await res.json();
-    if (result.deletedAccount) {
-      setAccounts(accounts.filter(account => account.id !== id));
+  
+    if (res.ok) {
+      fetchAccounts();
       setMessage('Konto erfolgreich gelöscht.');
     } else {
       setError('Fehler beim Löschen des Kontos.');
@@ -48,7 +55,7 @@ export default function AccountsList() {
       {message && <p className="text-green-500">{message}</p>}
       <div className="bg-white p-4 rounded shadow">
         {accounts.length === 0 ? (
-          <p className="text-gray-700">Keine Konten vorhanden. Bitte erstellen Sie ein Konto.</p>
+          <p className="text-gray-700">Keine Konten vorhanden.</p>
         ) : (
           <ul className="space-y-2">
             {accounts.map(account => (

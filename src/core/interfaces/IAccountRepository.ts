@@ -1,14 +1,10 @@
+// src/core/interfaces/IAccountRepository.ts
+import { Account } from '../types/Account';
+import { AccountInput } from '../types/AccountInput';
+
 export interface IAccountRepository {
-    createAccount(name: string, type: string): Promise<Account>;
-    deleteAccount(id: number): Promise<void>;
-    listAccounts(): Promise<Account[]>;
-  }
-  
-  export type Account = {
-    id: number;
-    name: string;
-    type: string;
-    debit: number;
-    credit: number;
-  };
-  
+  createAccount(account: AccountInput): Promise<Account>;
+  listAccounts(): Promise<Account[]>;
+  updateAccount(id: number, account: AccountInput): Promise<Account>;
+  deleteAccount(id: number): Promise<void>;
+}

@@ -1,19 +1,31 @@
+// src/app/accounts/create/page.tsx
 'use client';
 
 import { useState } from 'react';
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import Button from '@/components/Button';
+import { AccountInput } from '@/core/types/AccountInput';
 
 export default function CreateAccountPage() {
-  const [name, setName] = useState('');
-  const [type, setType] = useState('asset');
+  const [formData, setFormData] = useState<AccountInput>({
+    name: '',
+    type: 'asset',
+  });
   const [error, setError] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const createAccount = async () => {
     setError('');
 
-    if (!name) {
+    if (!formData.name) {
       setError('Name ist erforderlich.');
       return;
     }
@@ -23,12 +35,14 @@ export default function CreateAccountPage() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, type }),
+      body: JSON.stringify(formData),
     });
 
     if (res.ok) {
-      setName('');
-      setType('asset');
+      setFormData({
+        name: '',
+        type: 'asset',
+      });
     } else {
       setError('Fehler beim Erstellen des Kontos.');
     }
@@ -41,13 +55,14 @@ export default function CreateAccountPage() {
       <InputField
         label="Name"
         name="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={formData.name}
+        onChange={handleChange}
       />
       <SelectField
         label="Typ"
-        value={type}
-        onChange={(e) => setType(e.target.value)}
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
         options={[
           { value: 'asset', label: 'Aktivkonto' },
           { value: 'liability', label: 'Passivkonto' },

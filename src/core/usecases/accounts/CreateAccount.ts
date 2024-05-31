@@ -1,10 +1,12 @@
+// src/core/usecases/accounts/CreateAccount.ts
 import { IAccountRepository } from '../../interfaces/IAccountRepository';
+import { AccountInput } from '../../types/AccountInput';
+import { Account } from '../../types/Account';
 
 export class CreateAccount {
   constructor(private accountRepository: IAccountRepository) {}
 
-  async run(name: string, type: string) {
-    if (!name) throw new Error('Name is required');
-    return this.accountRepository.createAccount(name, type);
+  async run(accountInput: AccountInput): Promise<Account> {
+    return this.accountRepository.createAccount(accountInput);
   }
 }

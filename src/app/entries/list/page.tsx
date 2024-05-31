@@ -1,5 +1,3 @@
-// src/app/entries/list/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -7,9 +5,10 @@ import EntryList from '@/components/EntryList';
 import { Account } from '@/core/types/Account';
 import { Entry } from '@/core/types/Entry';
 
-export default function EntryListPage() {
+export default function EntriesListPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [error, setError] = useState<string>(''); // Typ "string" hinzugefügt
 
   useEffect(() => {
     fetchAccounts();
@@ -28,11 +27,11 @@ export default function EntryListPage() {
     setEntries(data);
   };
 
-  const handleEditEntry = (entry: Entry) => {
-    // Handle edit entry (you can use router to navigate to edit page)
+  const handleEdit = (entry: Entry) => {
+    // Edit functionality implementation here
   };
 
-  const handleDeleteEntry = async (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!confirm('Sind Sie sicher, dass Sie diesen Buchungssatz löschen möchten?')) {
       return;
     }
@@ -49,26 +48,35 @@ export default function EntryListPage() {
   };
 
   const handleReverseEntry = async (id: number) => {
-    const response = await fetch('/api/entries/reverse', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-    });
+    try {
+      const response = await fetch('/api/entries/reverse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
 
-    const newEntry = await response.json();
-    fetchEntries();
+      if (!response.ok) {
+        throw new Error('Fehler beim Rückbuchen');
+      }
+
+      const newEntry = await response.json();
+      fetchEntries();
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Buchungssätze Übersicht</h1>
+      {error && <p className="text-red-500">{error}</p>}
       <EntryList
         entries={entries}
         accounts={accounts}
-        onEdit={handleEditEntry}
-        onDelete={handleDeleteEntry}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
         onReverse={handleReverseEntry}
       />
     </div>

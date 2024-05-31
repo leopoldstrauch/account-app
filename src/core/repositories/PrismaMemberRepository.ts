@@ -1,8 +1,8 @@
 import { PrismaClient, Member as PrismaMember } from '@prisma/client';
 import { IMemberRepository } from '../interfaces/IMemberRepository';
-import { Member, MemberInput } from '../types/Member';
-
-const prisma = new PrismaClient();
+import { Member } from '../types/Member';
+import { MemberInput } from '../types/MemberInput';
+import prisma from '@/lib/prisma';
 
 export class PrismaMemberRepository implements IMemberRepository {
   async createMember(member: MemberInput): Promise<Member> {

@@ -1,23 +1,18 @@
+// src/core/types/Entry.ts
 export type Entry = {
-    id: number;
-    debitAccountId: number;
-    creditAccountId: number;
-    amount: number;
-    status: string;
-    date: Date;
-    documentNumber: string;
-    description: string;
-    remark: string;
-  };
-  
-  export interface EntryInput {
-    id?: number;
-    debitAccountId: number;
-    creditAccountId: number;
-    amount: number;
-    date: string;
-    documentNumber: string;
-    description: string;
-    remark: string;
-  }
-  
+  id: number;
+  debitAccountId: number;
+  creditAccountId: number;
+  amount: number;
+  status: EntryStatus;
+  date: Date;
+  documentNumber: string;
+  description: string;
+  remark: string;
+};
+
+// src/core/types/EntryStatus.ts
+export enum EntryStatus {
+  OPEN = 'open',
+  POSTED = 'posted',
+}
