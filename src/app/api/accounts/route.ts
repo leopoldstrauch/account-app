@@ -1,27 +1,19 @@
 // src/app/api/accounts/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaAccountRepository } from '@/core/repositories/PrismaAccountRepository';
-import { CreateAccount } from '@/core/usecases/accounts/CreateAccount';
-import { AccountInput } from '@/core/types/AccountInput';
+import {NextRequest, NextResponse} from 'next/server';
+import {PrismaEventRepository} from '@/core/repositories/PrismaEventRepository';
+import {CreateAccount} from '@/core/usecases/accounts/CreateAccount';
+import {CreateAccountInput} from '@/core/types/CreateAccountInput';
 
-const accountRepository = new PrismaAccountRepository();
+const eventRepository: PrismaEventRepository = new PrismaEventRepository();
+const createAccount: CreateAccount = new CreateAccount(eventRepository);
 
 export async function POST(request: NextRequest) {
-  const accountInput: AccountInput = await request.json();
-  const createAccount = new CreateAccount(accountRepository);
-  try {
-    const account = await createAccount.run(accountInput);
-    return NextResponse.json(account);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    const accounts = await accountRepository.listAccounts();
-    return NextResponse.json(accounts);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+    try {
+        const accountInput: CreateAccountInput = await request.json();
+        await createAccount.run(accountInput);
+        return NextResponse.json({message: 'Account created and event stored'});
+    } catch (error: any) {
+        console.error('Error:', error); // Debugging: Log the error
+        return NextResponse.json({error: error.message}, {status: 400});
+    }
 }

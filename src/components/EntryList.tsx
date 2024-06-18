@@ -6,8 +6,8 @@ interface EntryListProps {
   entries: Entry[];
   accounts: Account[];
   onEdit: (entry: Entry) => void;
-  onDelete: (id: number) => void;
-  onReverse: (id: number) => void;
+  onDelete: (id: string) => void;
+  onReverse: (id: string) => void;
 }
 
 export default function EntryList({ entries, accounts, onEdit, onDelete, onReverse }: EntryListProps) {

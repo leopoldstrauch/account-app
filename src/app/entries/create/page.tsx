@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import EntryForm from '@/components/EntryForm';
 import { Account } from '@/core/types/Account';
-import { EntryInput } from '@/core/types/Entry';
+import {EntryInput} from "@/core/types/EntryInput";
+
 
 export default function CreateEntryPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);

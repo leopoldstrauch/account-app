@@ -1,36 +1,21 @@
 // src/core/repositories/PrismaAccountRepository.ts
 import { PrismaClient, Account as PrismaAccount } from '@prisma/client';
 import { IAccountRepository } from '../interfaces/IAccountRepository';
-import { AccountInput } from '../types/AccountInput';
+import { CreateAccountInput } from '../types/CreateAccountInput';
 import { Account, AccountType } from '../types/Account';
 import prisma from '@/lib/prisma';
 
 
-export class PrismaAccountRepository implements IAccountRepository {
-  async createAccount(account: AccountInput): Promise<Account> {
-    const createdAccount: PrismaAccount = await prisma.account.create({
-      data: account,
-    });
+export class AccountRepository implements IAccountRepository {
 
-    return this.toDomain(createdAccount);
+
+
+  constructor() {
   }
 
   async listAccounts(): Promise<Account[]> {
     const accounts: PrismaAccount[] = await prisma.account.findMany();
     return accounts.map(this.toDomain);
-  }
-
-  async updateAccount(id: number, account: AccountInput): Promise<Account> {
-    const updatedAccount: PrismaAccount = await prisma.account.update({
-      where: { id },
-      data: account,
-    });
-
-    return this.toDomain(updatedAccount);
-  }
-
-  async deleteAccount(id: number): Promise<void> {
-    await prisma.account.delete({ where: { id } });
   }
 
   private toDomain(prismaAccount: PrismaAccount): Account {

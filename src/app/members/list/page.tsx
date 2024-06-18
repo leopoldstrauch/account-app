@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Button from '@/components/Button';
 import InputField from '@/components/InputField';
-import { Member } from '@/core/types/Member';
+import {Member} from "@prisma/client";
 
 export default function MembersList() {
     const [members, setMembers] = useState<Member[]>([]);
@@ -20,7 +20,7 @@ export default function MembersList() {
         setMembers(data);
     };
 
-    const deleteMember = async (id: number) => {
+    const deleteMember = async (id: string) => {
         if (!confirm('Sind Sie sicher, dass Sie dieses Mitglied löschen möchten?')) {
             return;
         }
@@ -74,10 +74,12 @@ export default function MembersList() {
                                     <p>{member.addressAddition}</p>
                                 </div>
                                 <div className="flex space-x-2">
-                                    <Button onClick={() => handleEdit(member)} className="bg-yellow-600 hover:bg-yellow-700">
+                                    <Button onClick={() => handleEdit(member)}
+                                            className="bg-yellow-600 hover:bg-yellow-700">
                                         Bearbeiten
                                     </Button>
-                                    <Button onClick={() => deleteMember(member.id)} className="bg-red-600 hover:bg-red-700">
+                                    <Button onClick={() => deleteMember(member.id)}
+                                            className="bg-red-600 hover:bg-red-700">
                                         Löschen
                                     </Button>
                                 </div>
@@ -89,18 +91,43 @@ export default function MembersList() {
             {editingMember && (
                 <div className="bg-white p-4 rounded shadow mt-4">
                     <h2 className="text-xl font-semibold mb-2">Mitglied bearbeiten</h2>
-                    <InputField label="Name" name="name" value={editingMember.name} onChange={e => setEditingMember({ ...editingMember, name: e.target.value })} />
-                    <InputField label="Vorname" name="firstName" value={editingMember.firstName} onChange={e => setEditingMember({ ...editingMember, firstName: e.target.value })} />
-                    <InputField label="Geburtstag" name="birthdate" type="date" value={new Date(editingMember.birthdate).toISOString().split('T')[0]} onChange={e => setEditingMember({ ...editingMember, birthdate: new Date(e.target.value) })} />
-                    <InputField label="Beginn der Mitgliedschaft" name="membershipStartDate" type="date" value={new Date(editingMember.membershipStartDate).toISOString().split('T')[0]} onChange={e => setEditingMember({ ...editingMember, membershipStartDate: new Date(e.target.value) })} />
-                    <InputField label="Ende der Mitgliedschaft" name="membershipEndDate" type="date" value={editingMember.membershipEndDate ? new Date(editingMember.membershipEndDate).toISOString().split('T')[0] : ''} onChange={e => setEditingMember({ ...editingMember, membershipEndDate: e.target.value ? new Date(e.target.value) : null })} />
-                    <InputField label="Tel - Festnetz" name="phoneNumber" value={editingMember.phoneNumber || ''} onChange={e => setEditingMember({ ...editingMember, phoneNumber: e.target.value })} />
-                    <InputField label="Tel - Mobil" name="mobileNumber" value={editingMember.mobileNumber || ''} onChange={e => setEditingMember({ ...editingMember, mobileNumber: e.target.value })} />
-                    <InputField label="Email" name="email" value={editingMember.email} onChange={e => setEditingMember({ ...editingMember, email: e.target.value })} />
-                    <InputField label="PLZ / Ort" name="postalCode" value={editingMember.postalCode} onChange={e => setEditingMember({ ...editingMember, postalCode: e.target.value })} />
-                    <InputField label="Stadt" name="city" value={editingMember.city} onChange={e => setEditingMember({ ...editingMember, city: e.target.value })} />
-                    <InputField label="Straße" name="street" value={editingMember.street} onChange={e => setEditingMember({ ...editingMember, street: e.target.value })} />
-                    <InputField label="Anschrift Zusatz" name="addressAddition" value={editingMember.addressAddition || ''} onChange={e => setEditingMember({ ...editingMember, addressAddition: e.target.value })} />
+                    <InputField label="Name" name="name" value={editingMember.name}
+                                onChange={e => setEditingMember({...editingMember, name: e.target.value})}/>
+                    <InputField label="Vorname" name="firstName" value={editingMember.firstName}
+                                onChange={e => setEditingMember({...editingMember, firstName: e.target.value})}/>
+                    <InputField label="Geburtstag" name="birthdate" type="date"
+                                value={new Date(editingMember.birthdate).toISOString().split('T')[0]}
+                                onChange={e => setEditingMember({
+                                    ...editingMember,
+                                    birthdate: new Date(e.target.value)
+                                })}/>
+                    <InputField label="Beginn der Mitgliedschaft" name="membershipStartDate" type="date"
+                                value={new Date(editingMember.membershipStartDate).toISOString().split('T')[0]}
+                                onChange={e => setEditingMember({
+                                    ...editingMember,
+                                    membershipStartDate: new Date(e.target.value)
+                                })}/>
+                    <InputField label="Ende der Mitgliedschaft" name="membershipEndDate" type="date"
+                                value={editingMember.membershipEndDate ? new Date(editingMember.membershipEndDate).toISOString().split('T')[0] : ''}
+                                onChange={e => setEditingMember({
+                                    ...editingMember,
+                                    membershipEndDate: e.target.value ? new Date(e.target.value) : null
+                                })}/>
+                    <InputField label="Tel - Festnetz" name="phoneNumber" value={editingMember.phoneNumber || ''}
+                                onChange={e => setEditingMember({...editingMember, phoneNumber: e.target.value})}/>
+                    <InputField label="Tel - Mobil" name="mobileNumber" value={editingMember.mobileNumber || ''}
+                                onChange={e => setEditingMember({...editingMember, mobileNumber: e.target.value})}/>
+                    <InputField label="Email" name="email" value={editingMember.email}
+                                onChange={e => setEditingMember({...editingMember, email: e.target.value})}/>
+                    <InputField label="PLZ / Ort" name="postalCode" value={editingMember.postalCode}
+                                onChange={e => setEditingMember({...editingMember, postalCode: e.target.value})}/>
+                    <InputField label="Stadt" name="city" value={editingMember.city}
+                                onChange={e => setEditingMember({...editingMember, city: e.target.value})}/>
+                    <InputField label="Straße" name="street" value={editingMember.street}
+                                onChange={e => setEditingMember({...editingMember, street: e.target.value})}/>
+                    <InputField label="Anschrift Zusatz" name="addressAddition"
+                                value={editingMember.addressAddition || ''}
+                                onChange={e => setEditingMember({...editingMember, addressAddition: e.target.value})}/>
                     <Button onClick={() => handleSave(editingMember)}>Speichern</Button>
                 </div>
             )}

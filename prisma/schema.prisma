@@ -7,8 +7,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Event {
+  id        String   @id @default(uuid())
+  sequence  Int
+  type      String
+  timestamp DateTime
+  entityId  String
+  data      Json
+  @@index([entityId, sequence])
+}
+
 model Account {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(uuid())
   name          String   @unique
   type          String
   debit         Float    @default(0.0)
@@ -18,21 +28,21 @@ model Account {
 }
 
 model Entry {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(uuid())
   debitAccount   Account  @relation("DebitAccount", fields: [debitAccountId], references: [id])
-  debitAccountId Int
+  debitAccountId String
   creditAccount  Account  @relation("CreditAccount", fields: [creditAccountId], references: [id])
-  creditAccountId Int
+  creditAccountId String
   amount         Float
   date           DateTime
   documentNumber String
   description    String
   remark         String
-  status         String   @default("open") // "open" or "posted"
+  status         String   @default("open")
 }
 
 model Member {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @default(uuid())
   name                String
   firstName           String
   birthdate           DateTime
@@ -46,4 +56,3 @@ model Member {
   street              String
   addressAddition     String?
 }
-

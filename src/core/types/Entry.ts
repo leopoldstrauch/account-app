@@ -1,8 +1,8 @@
 // src/core/types/Entry.ts
 export type Entry = {
-  id: number;
-  debitAccountId: number;
-  creditAccountId: number;
+  id: string;
+  debitAccountId: string;
+  creditAccountId: string;
   amount: number;
   status: EntryStatus;
   date: Date;

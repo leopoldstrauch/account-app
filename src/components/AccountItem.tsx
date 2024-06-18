@@ -3,7 +3,7 @@ import Button from './Button';
 
 type AccountItemProps = {
   account: Account;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function AccountItem({ account, onDelete }: AccountItemProps) {

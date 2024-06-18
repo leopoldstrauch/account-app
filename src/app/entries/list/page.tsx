@@ -31,7 +31,7 @@ export default function EntriesListPage() {
     // Edit functionality implementation here
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Sind Sie sicher, dass Sie diesen Buchungssatz löschen möchten?')) {
       return;
     }
@@ -47,7 +47,7 @@ export default function EntriesListPage() {
     fetchEntries();
   };
 
-  const handleReverseEntry = async (id: number) => {
+  const handleReverseEntry = async (id: string) => {
     try {
       const response = await fetch('/api/entries/reverse', {
         method: 'POST',

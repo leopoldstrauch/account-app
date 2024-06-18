@@ -3,7 +3,7 @@ import AccountItem from './AccountItem';
 
 type AccountListProps = {
   accounts: Account[];
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function AccountList({ accounts, onDelete }: AccountListProps) {
