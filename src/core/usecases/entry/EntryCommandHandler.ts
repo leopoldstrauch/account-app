@@ -1,7 +1,9 @@
+// src/core/usecases/entries/EntryCommandHandlers.ts
+
 import { IEventRepository } from "@/core/interfaces/IEventRepository";
-import { CreateEntryCommand } from "@/core/usecases/entry/EntryCommands";
-import { EntryCreatedEvent } from "@/core/usecases/entry/EntryEvents";
 import { v4 as uuidv4 } from "uuid";
+import {CreateEntryCommand} from "@/core/usecases/entry/EntryCommands";
+import {EntryCreatedEvent} from "@/core/usecases/entry/EntryEvents";
 
 export class CreateEntryHandler {
     constructor(private eventRepository: IEventRepository) {}

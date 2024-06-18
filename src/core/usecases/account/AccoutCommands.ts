@@ -1,3 +1,5 @@
+// src/core/usecases/accounts/AccountCommands.ts
+
 import {AccountType} from "@/core/types/AccountType";
 
 export type CreateAccountCommand = {
@@ -12,11 +14,4 @@ export type DeleteAccountCommand = {
 export type UpdateAccountNameCommand = {
     entityId: string;
     newName: string;
-};
-
-export type CreateEntryCommand = {
-    debitAccountId: string;
-    creditAccountId: string;
-    amount: number;
-    description?: string;
 };

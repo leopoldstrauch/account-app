@@ -1,3 +1,5 @@
+// src/core/usecases/entries/EntryEvents.ts
+
 import { TEvent } from "@/core/types/Event";
 import { v4 as uuidv4 } from "uuid";
 import { EventType } from "@/core/types/EventType";

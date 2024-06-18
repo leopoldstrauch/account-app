@@ -1,16 +1,8 @@
-import { Event } from '../types/Event';
-import { EventType } from "@/core/types/EventType";
+// src/core/interfaces/IEventRepository.ts
+
+import { Event } from "@/core/types/Event";
 
 export interface IEventRepository {
-    createEvent(event: Event): Promise<Event>;
-
-    getAllEntityIds(): Promise<string[]>;
-
-    getLastEventOfType(entityId: string, eventType: EventType): Promise<Event | null>;
-
-    getEventsByTypesAfterSequence(
-        entityId: string,
-        eventTypes: EventType[],
-        afterSequence: number
-    ): Promise<Event[]>;
+    createEvent(event: Event): Promise<void>;
+    getEventsByEntityId(entityId: string): Promise<Event[]>;
 }

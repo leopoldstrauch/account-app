@@ -1,14 +1,9 @@
 // src/core/interfaces/IAccountRepository.ts
-import {Account} from '../types/Account';
+
+import { AccountReadModel } from "@/core/readmodels/AccountReadModel";
 
 export interface IAccountRepository {
-    listAccounts(): Promise<Account[]>;
-
-    getAccount(entityId: string): any;
-
-    save(entityId: string): any;
-
-    delete(entityId: string): any;
-
-    get(entityId: any): any;
+    save(account: AccountReadModel): Promise<void>;
+    get(id: string): Promise<AccountReadModel | null>;
+    delete(id: string): Promise<void>;
 }

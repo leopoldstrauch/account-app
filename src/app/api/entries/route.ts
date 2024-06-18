@@ -1,36 +1,43 @@
-import {NextRequest, NextResponse} from 'next/server';
-import {PrismaEntryRepository} from '@/core/repositories/PrismaEntryRepository';
-import {CreateEntry} from '@/core/usecases/entries/CreateEntry';
-import {PostEntries} from '@/core/usecases/entries/PostEntry';
-import {ListEntries} from '@/core/usecases/entries/ListEntry';
-import {Entry} from "@/core/types/Entry";
+import {NextApiRequest, NextApiResponse} from 'next';
+import {EventRepository} from "@/core/repositories/EventRepository";
+import {AccountRepository} from "@/core/repositories/AccountRepository";
+import {PrismaClient} from "@prisma/client";
+import {CreateEntryHandler} from "@/core/usecases/entry/EntryCommandHandler";
+import {AccountReadModelProcessor} from "@/core/readmodel/AccountReadmodelProcessor";
+import {CreateEntryCommand} from "@/core/usecases/entry/EntryCommands";
 
+// Initialize Prisma Client
+const prisma = new PrismaClient();
 
-const entryRepository:PrismaEntryRepository = new PrismaEntryRepository();
+// Initialize Repositories
+const eventRepository = new EventRepository(prisma);
+const accountRepository = new AccountRepository(prisma);
 
-export async function GET() {
-    const listEntries: ListEntries = new ListEntries(entryRepository);
-    const entries: Entry[] = await listEntries.run();
-    return NextResponse.json(entries);
-}
+// Initialize Handlers
+const createEntryHandler = new CreateEntryHandler(eventRepository);
+const accountReadModelProcessor = new AccountReadModelProcessor(accountRepository);
 
-export async function POST(request: NextRequest) {
-    const entryData = await request.json();
-    const createEntry: CreateEntry = new CreateEntry(entryRepository);
-    try {
-        const entry: Entry = await createEntry.run(entryData);
-        return NextResponse.json(entry);
-    } catch (error: any) {
-        return NextResponse.json({error: error.message}, {status: 400});
+export default async function createEntry(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method !== 'POST') {
+        res.status(405).end(); // Method Not Allowed
+        return;
     }
-}
 
-export async function PATCH() {
-    const postEntries: PostEntries = new PostEntries(entryRepository);
+    const {debitAccountId, creditAccountId, amount, description} = req.body;
+
+    const command: CreateEntryCommand = {debitAccountId, creditAccountId, amount, description};
+
     try {
-        await postEntries.run();
-        return NextResponse.json({message: 'Entries posted'});
-    } catch (error: any) {
-        return NextResponse.json({error: error.message}, {status: 400});
+        await createEntryHandler.run(command);
+
+        // Process the events to update the read models
+        const events = await eventRepository.getEventsByEntityId(command.entityId); // This method needs to be implemented
+        for (const event of events) {
+            await accountReadModelProcessor.processEvent(event);
+        }
+
+        res.status(201).json({message: 'Entry created and read model updated successfully'});
+    } catch (error) {
+        res.status(500).json({error: error.message});
     }
 }

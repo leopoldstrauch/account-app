@@ -1,13 +1,15 @@
-import {IAccountRepository} from "@/core/interfaces/IAccountRepository";
-import {EventType} from "@/core/types/EventType";
-import {AccountType} from "@/core/types/AccountType";
+// src/core/usecases/accounts/AccountReadModelProcessor.ts
+
+import { IAccountRepository } from "@/core/interfaces/IAccountRepository";
+import { EventType } from "@/core/types/EventType";
+import {AccountCreatedEvent, AccountDeletedEvent, AccountNameUpdatedEvent} from "@/core/usecases/account/AccountEvents";
 import {EntryCreatedEvent} from "@/core/usecases/entry/EntryEvents";
 import {AccountReadModel} from "@/core/readmodel/AccountReadmodel";
-import {AccountCreatedEvent, AccountDeletedEvent, AccountNameUpdatedEvent} from "@/core/usecases/account/AccountEvents";
+import {AccountType} from "@/core/types/AccountType";
+
 
 export class AccountReadModelProcessor {
-    constructor(private accountRepository: IAccountRepository) {
-    }
+    constructor(private accountRepository: IAccountRepository) {}
 
     async processEvent(event: any): Promise<void> {
         switch (event.type) {
@@ -37,7 +39,7 @@ export class AccountReadModelProcessor {
             updatedAt: event.timestamp,
             version: event.sequence,
         };
-        await this.accountRepository.save(event.entityId);
+        await this.accountRepository.save(account);
     }
 
     private async handleAccountDeleted(event: AccountDeletedEvent): Promise<void> {
@@ -46,10 +48,12 @@ export class AccountReadModelProcessor {
 
     private async handleAccountNameUpdated(event: AccountNameUpdatedEvent): Promise<void> {
         const account = await this.accountRepository.get(event.entityId);
-        account.name = event.data.newName;
-        account.updatedAt = event.timestamp;
-        account.version = event.sequence;
-        await this.accountRepository.save(account);
+        if (account) {
+            account.name = event.data.newName;
+            account.updatedAt = event.timestamp;
+            account.version = event.sequence;
+            await this.accountRepository.save(account);
+        }
     }
 
     private async handleEntryCreated(event: EntryCreatedEvent): Promise<void> {
