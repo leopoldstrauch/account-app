@@ -1,57 +1,46 @@
-// src/core/repositories/AccountRepository.ts
-
-import { IAccountRepository } from "@/core/interfaces/IAccountRepository";
-import { PrismaClient } from "@prisma/client";
-import {AccountReadModel} from "@/core/readmodel/AccountReadmodel";
+import {IAccountRepository} from "@/core/interfaces/IAccountRepository";
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
+import {AccountType} from "@/core/types/AccountType";
+import prisma from "@/lib/prisma";
 
 export class AccountRepository implements IAccountRepository {
-  private prisma: PrismaClient;
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
+    async get(id: string): Promise<AccountReadmodel | null> {
+        const account = await prisma.account.findUnique({where: {id}});
+        if (!account) return null;
+        return {
+            id: account.id,
+            name: account.name,
+            type: account.type as AccountType,
+            debit: account.debit,
+            credit: account.credit,
+            createdAt: account.createdAt,
+            updatedAt: account.updatedAt,
+            version: account.version
+        };
+    }
 
-  async save(account: AccountReadModel): Promise<void> {
-    await this.prisma.account.upsert({
-      where: { id: account.id },
-      update: {
-        name: account.name,
-        type: account.type,
-        debit: account.debit,
-        credit: account.credit,
-        createdAt: account.createdAt,
-        updatedAt: account.updatedAt,
-        version: account.version,
-      },
-      create: {
-        id: account.id,
-        name: account.name,
-        type: account.type,
-        debit: account.debit,
-        credit: account.credit,
-        createdAt: account.createdAt,
-        updatedAt: account.updatedAt,
-        version: account.version,
-      },
-    });
-  }
+    async getAll(): Promise<AccountReadmodel[]> {
+        const accounts = await prisma.account.findMany();
+        return accounts.map(account => ({
+            id: account.id,
+            name: account.name,
+            type: account.type as AccountType,
+            debit: account.debit,
+            credit: account.credit,
+            createdAt: account.createdAt,
+            updatedAt: account.updatedAt,
+            version: account.version,
+        }));
+    }
 
-  async get(id: string): Promise<AccountReadModel | null> {
-    const account = await this.prisma.account.findUnique({ where: { id } });
-    if (!account) return null;
-    return {
-      id: account.id,
-      name: account.name,
-      type: account.type,
-      debit: account.debit,
-      credit: account.credit,
-      createdAt: account.createdAt,
-      updatedAt: account.updatedAt,
-      version: account.version,
-    };
-  }
+    internal_delete(id: string): Promise<void> {
+        return Promise.resolve(undefined);
+        //TODO impelement me
+    }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.account.delete({ where: { id } });
-  }
+    internal_save(account: AccountReadmodel): Promise<void> {
+        return Promise.resolve(undefined);
+        //TODO impelement me
+    }
 }

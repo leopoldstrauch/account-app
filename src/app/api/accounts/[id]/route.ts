@@ -1,14 +1,21 @@
 // src/app/api/accounts/[id]/route.ts
 import {NextRequest, NextResponse} from 'next/server';
-import {AccountRepository} from '@/core/repositories/AccountRepository';
+import {DeleteAccountHandler} from "@/core/usecases/account/AccountCommandHandler";
+import {DeleteAccountCommand} from "@/core/usecases/account/AccoutCommands";
+import {PrismaEventRepository} from "@/core/repositories/EventRepository";
 
-const accountRepository: AccountRepository = new AccountRepository();
+const eventRepository = new PrismaEventRepository();
 
-export async function DELETE(request: NextRequest, {params}: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
+    const {entityId} = await request.json();
+    const deleteAccountHandler = new DeleteAccountHandler(eventRepository);
+
+    const command: DeleteAccountCommand = {entityId}
+
     try {
-        await accountRepository.deleteAccount(params.id);
-        return NextResponse.json({message: 'Konto erfolgreich gelöscht'});
+        await deleteAccountHandler.run(command);
+        return NextResponse.json({message: 'Account deleted successfully'}, {status: 201});
     } catch (error: any) {
-        return NextResponse.json({error: error.message}, {status: 400});
+        return NextResponse.json({error: error.message}, {status: 500});
     }
 }

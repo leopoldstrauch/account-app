@@ -1,6 +1,6 @@
 import {AccountType} from "@/core/types/AccountType";
 
-export interface AccountReadModel {
+export interface EntryReadmodel {
     id: string;
     name: string;
     type: AccountType;

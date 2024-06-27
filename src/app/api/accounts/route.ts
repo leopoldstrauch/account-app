@@ -1,44 +1,33 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { EventRepository } from "@/core/repositories/EventRepository";
-import { AccountRepository } from "@/core/repositories/AccountRepository";
-import { PrismaClient } from "@prisma/client";
-import { AccountType } from "@/core/types/AccountType";
-import {CreateAccountHandler} from "@/core/usecases/account/AccountCommandHandler";
-import {AccountReadModelProcessor} from "@/core/readmodel/AccountReadmodelProcessor";
+import {NextRequest, NextResponse} from 'next/server';
+import {AccountRepository} from '@/core/repositories/AccountRepository';
 import {CreateAccountCommand} from "@/core/usecases/account/AccoutCommands";
+import {CreateAccountHandler} from "@/core/usecases/account/AccountCommandHandler";
+import {PrismaEventRepository} from "@/core/repositories/EventRepository";
 
-// Initialize Prisma Client
-const prisma = new PrismaClient();
 
 // Initialize Repositories
-const eventRepository = new EventRepository(prisma);
-const accountRepository = new AccountRepository(prisma);
+const accountRepository = new AccountRepository();
+const eventRepository = new PrismaEventRepository();
 
-// Initialize Handlers
-const createAccountHandler = new CreateAccountHandler(eventRepository);
-const accountReadModelProcessor = new AccountReadModelProcessor(accountRepository);
-
-export default async function createAccount(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        res.status(405).end(); // Method Not Allowed
-        return;
+export async function GET() {
+    try {
+        const accounts = await accountRepository.getAll();
+        return NextResponse.json(accounts);
+    } catch (error: any) {
+        return NextResponse.json({error: error.message}, {status: 500});
     }
+}
 
-    const { name, type } = req.body;
+export async function POST(request: NextRequest) {
+    const {name, type} = await request.json();
+    const createAccountHandler = new CreateAccountHandler(eventRepository);
 
-    const command: CreateAccountCommand = { name, type: type as AccountType };
+    const command: CreateAccountCommand = {name, type};
 
     try {
         await createAccountHandler.run(command);
-
-        // Process the events to update the read models
-        const events = await eventRepository.getEventsByEntityId(command.entityId); // This method needs to be implemented
-        for (const event of events) {
-            await accountReadModelProcessor.processEvent(event);
-        }
-
-        res.status(201).json({ message: 'Account created and read model updated successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        return NextResponse.json({message: 'Account created successfully'}, {status: 201});
+    } catch (error: any) {
+        return NextResponse.json({error: error.message}, {status: 500});
     }
 }

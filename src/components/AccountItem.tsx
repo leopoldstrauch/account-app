@@ -1,8 +1,8 @@
-import { Account } from '@/core/types/Account';
 import Button from './Button';
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
 
 type AccountItemProps = {
-  account: Account;
+  account: AccountReadmodel;
   onDelete: (id: string) => void;
 };
 

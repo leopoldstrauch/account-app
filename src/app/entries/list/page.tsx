@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import EntryList from '@/components/EntryList';
-import { Account } from '@/core/types/Account';
 import { Entry } from '@/core/types/Entry';
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
 
 export default function EntriesListPage() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accounts, setAccounts] = useState<AccountReadmodel[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string>(''); // Typ "string" hinzugefügt
 

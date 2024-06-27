@@ -2,10 +2,10 @@ import { useState } from 'react';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import Button from './Button';
-import { Account } from '@/core/types/Account';
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
 
 type CreateAccountFormProps = {
-  accounts: Account[];
+  accounts: AccountReadmodel[];
   onCreate: (name: string, type: string) => void;
   error: string;
   setError: (error: string) => void;

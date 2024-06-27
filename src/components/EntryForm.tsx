@@ -1,28 +1,27 @@
-import {Account} from '@/core/types/Account';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import Button from './Button';
 import React, {useState} from 'react';
-import {EntryInput} from "@/core/types/EntryInput";
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
+import {CreateEntryCommand} from "@/core/usecases/entry/EntryCommands";
 
 interface EntryFormProps {
-    accounts: Account[];
-    editingEntry: EntryInput | null;
-    onSave: (entry: EntryInput) => void;
+    accounts: AccountReadmodel[];
+    editingEntry: CreateEntryCommand | null;
+    onSave: (entry: CreateEntryCommand) => void;
     error: string;
     setError: (error: string) => void;
 }
 
 export default function EntryForm({accounts, editingEntry, onSave, error, setError}: EntryFormProps) {
-    const [formData, setFormData] = useState<EntryInput>({
-        id: editingEntry?.id,
+    const [formData, setFormData] = useState<CreateEntryCommand>({
         debitAccountId: editingEntry?.debitAccountId ?? '0',
         creditAccountId: editingEntry?.creditAccountId ?? '0',
         amount: editingEntry?.amount ?? 0,
-        date: editingEntry?.date ?? '',
-        documentNumber: editingEntry?.documentNumber ?? '',
+        date: editingEntry?.date ?? new Date(),
+        entryNumber: editingEntry?.entryNumber ?? '',
         description: editingEntry?.description ?? '',
-        remark: editingEntry?.remark ?? '',
+        note: editingEntry?.note ?? '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -44,14 +43,14 @@ export default function EntryForm({accounts, editingEntry, onSave, error, setErr
             <SelectField
                 label="Sollkonto"
                 name="debitAccountId"
-                value={String(formData.debitAccountId)} // Wert in String umwandeln
+                value={String(formData.debitAccountId)}
                 onChange={handleChange}
                 options={accounts.map(account => ({value: account.id, label: account.name}))}
             />
             <SelectField
                 label="Habenkonto"
                 name="creditAccountId"
-                value={String(formData.creditAccountId)} // Wert in String umwandeln
+                value={String(formData.creditAccountId)}
                 onChange={handleChange}
                 options={accounts.map(account => ({value: account.id, label: account.name}))}
             />
@@ -59,20 +58,20 @@ export default function EntryForm({accounts, editingEntry, onSave, error, setErr
                 label="Betrag"
                 type="number"
                 name="amount"
-                value={String(formData.amount)} // Wert in String umwandeln
+                value={String(formData.amount)}
                 onChange={handleChange}
             />
             <InputField
                 label="Datum"
                 type="date"
                 name="date"
-                value={formData.date.split('T')[0]}
+                value={formData.date.toISOString().split('T')[0]}
                 onChange={handleChange}
             />
             <InputField
                 label="Belegnummer"
-                name="documentNumber"
-                value={formData.documentNumber}
+                name="entryNumber"
+                value={formData.entryNumber}
                 onChange={handleChange}
             />
             <InputField
@@ -83,8 +82,8 @@ export default function EntryForm({accounts, editingEntry, onSave, error, setErr
             />
             <InputField
                 label="Anmerkung"
-                name="remark"
-                value={formData.remark}
+                name="note"
+                value={formData.note || ''}
                 onChange={handleChange}
             />
             <Button type="submit" onClick={() => {

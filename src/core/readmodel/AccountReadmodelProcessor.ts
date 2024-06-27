@@ -1,15 +1,19 @@
-// src/core/usecases/accounts/AccountReadModelProcessor.ts
+// src/core/usecases/accounts/AccountReadmodelProcessor.ts
 
-import { IAccountRepository } from "@/core/interfaces/IAccountRepository";
-import { EventType } from "@/core/types/EventType";
+import {IAccountRepository} from "@/core/interfaces/IAccountRepository";
+import {EventType} from "@/core/types/EventType";
 import {AccountCreatedEvent, AccountDeletedEvent, AccountNameUpdatedEvent} from "@/core/usecases/account/AccountEvents";
 import {EntryCreatedEvent} from "@/core/usecases/entry/EntryEvents";
-import {AccountReadModel} from "@/core/readmodel/AccountReadmodel";
 import {AccountType} from "@/core/types/AccountType";
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
 
 
-export class AccountReadModelProcessor {
-    constructor(private accountRepository: IAccountRepository) {}
+export class AccountReadmodelProcessor {
+    private accountRepository: IAccountRepository;
+
+    constructor(accountRepository: IAccountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     async processEvent(event: any): Promise<void> {
         switch (event.type) {
@@ -29,7 +33,7 @@ export class AccountReadModelProcessor {
     }
 
     private async handleAccountCreated(event: AccountCreatedEvent): Promise<void> {
-        const account: AccountReadModel = {
+        const account: AccountReadmodel = {
             id: event.entityId,
             name: event.data.name,
             type: event.data.type,
@@ -39,11 +43,11 @@ export class AccountReadModelProcessor {
             updatedAt: event.timestamp,
             version: event.sequence,
         };
-        await this.accountRepository.save(account);
+        await this.accountRepository.internal_save(account);
     }
 
     private async handleAccountDeleted(event: AccountDeletedEvent): Promise<void> {
-        await this.accountRepository.delete(event.entityId);
+        await this.accountRepository.internal_delete(event.entityId);
     }
 
     private async handleAccountNameUpdated(event: AccountNameUpdatedEvent): Promise<void> {
@@ -52,7 +56,7 @@ export class AccountReadModelProcessor {
             account.name = event.data.newName;
             account.updatedAt = event.timestamp;
             account.version = event.sequence;
-            await this.accountRepository.save(account);
+            await this.accountRepository.internal_save(account);
         }
     }
 
@@ -82,7 +86,7 @@ export class AccountReadModelProcessor {
         creditAccount.updatedAt = event.timestamp;
         creditAccount.version = event.sequence;
 
-        await this.accountRepository.save(debitAccount);
-        await this.accountRepository.save(creditAccount);
+        await this.accountRepository.internal_save(debitAccount);
+        await this.accountRepository.internal_save(creditAccount);
     }
 }

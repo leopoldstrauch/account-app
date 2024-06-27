@@ -1,10 +1,10 @@
 import { Entry } from '@/core/types/Entry';
-import { Account } from '@/core/types/Account';
 import Button from '@/components/Button';
+import {AccountReadmodel} from "@/core/types/AccountReadmodel";
 
 interface EntryListProps {
   entries: Entry[];
-  accounts: Account[];
+  accounts: AccountReadmodel[];
   onEdit: (entry: Entry) => void;
   onDelete: (id: string) => void;
   onReverse: (id: string) => void;

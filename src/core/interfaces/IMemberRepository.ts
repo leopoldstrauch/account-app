@@ -1,3 +1,11 @@
+import {MemberReadmodel} from "@/core/types/MemberReadmodel";
+
 export interface IMemberRepository {
-    listMembers(): Promise<Member[]>;
+    internal_save(meber: MemberReadmodel): Promise<void>;
+
+    get(id: string): Promise<MemberReadmodel | null>;
+
+    internal_delete(id: string): Promise<void>;
+
+    getAll(): Promise<MemberReadmodel[]>;
 }

@@ -4,8 +4,4 @@ export enum EventType {
     AccountDeleted = 'AccountDeleted',
     AccountNameUpdated = 'AccountNameUpdated',
     EntryCreated = 'EntryCreated',
-    EntryDeleted = 'EntryDeleted',
-    EntrySnapshoted = 'Snapshoted'
-
-    // Weitere Event-Typen hier hinzufügen
 }
